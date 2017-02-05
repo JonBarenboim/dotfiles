@@ -1,0 +1,72 @@
+######### PROMPT ##########
+# Format "[user directory]$" on local and "[user@host directory]$" on remote node
+# Add (branch) in yellow when in a git directory
+# Add (@host) in yellow when current directory remotely mounted
+# dollar sign in red if last job failed, else green
+# directory in blue if jobs are running in the background
+# directory on tan(I guess?) background if there are stoped jobs
+# username in cyan if root
+# For remote connections, '@' in green if connection has X11 support
+# ___ symbol appears in green, yellow, or red if cpu load is low, medium, or high respectively
+#
+#
+
+NONE="\[\033[0m\]"
+RED="\[\033[0;31m\]"
+BLUE="\[\033[0;34m\]"
+GREEN="\[\033[0;32m\]"
+BGREEN="\[\033[1;32m\]"
+BYELLOW="\[\033[1;33m\]"
+CYAN="\[\033[0;36m\]"
+
+prompt_command() {
+
+    local power_symbol="⚡"
+    load_symbol="☆"
+
+    local ret_color name_color at_color job_color git_branch remote_mount
+    local NCPU low_load med_load high_load cpu_load_avg load_color
+
+    { [ $? -ne 0 ] && ret_color=$RED ;} || ret_color=$GREEN
+    { [ $UID -eq 0 ] && name_color=$CYAN ;} || name_color=$NONE
+    { [ "$DISPLAY" ] && at_color=$BGREEN ;} || at_color=$NONE
+
+	job_color="\[\033[0"
+	if [ $(jobs -r | wc -l) -ne 0 ] ; then
+		job_color="$job_color;34"
+	fi
+	if [ $(jobs -s | wc -l) -ne 0 ] ; then
+		job_color="$job_color;01;48;5;101"
+	fi
+	job_color="${job_color}m\]"
+	if [ "$job_color" == "\[\033[0m\]" ] ; then
+		job_color=""
+	fi
+
+    git_branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')
+    remote_mount=$(df . 2> /dev/null | grep @ | sed -e 's/.*@\(.*\):.*/\(@\1\)/')
+
+    NCPU=$(grep -c 'processor' /proc/cpuinfo)
+    low_load=$(( 100 * $NCPU ))
+    med_load=$(( 200 * NCPU ))
+    high_load=$(( 400 * NCPU ))
+
+    # gets 5-min load avg. Change $2 to $1 or $3 to get one minute or 10 minute average, respectively, instead
+    cpu_load_avg=$(cat /proc/loadavg | awk '{ print $2 }') 
+
+    if [[ cpu_load_avg > high_load ]] ; then
+        load_color=$RED
+    elif [[ cpu_load_avg > med_load ]] ; then
+        load_color=$BYELLOW
+    else 
+        load_color=$GREEN
+    fi
+
+    PS1="${load_color}${load_symbol}${NONE}[${name_color}\u"
+    if [ "$SSH_CLIENT" ] || [ "$PBS_JOBID" ] || [ "$PBS_VERSION" ] ; then
+        PS1="${PS1}${at_color}@${NONE}\h"
+    fi
+    PS1="${PS1} ${job_color}\W${NONE}]"
+    PS1="${PS1}${BYELLOW}${remote_mount}${git_branch}${ret_color}\$${NONE} "
+}
+export PROMPT_COMMAND=prompt_command

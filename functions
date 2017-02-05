@@ -1,0 +1,138 @@
+########## FUNCTIONS ##########
+
+# moving around
+mkcd() { mkdir $1 && cd "${@: -1}" ;}
+mkmv() { mkdir "${@: -1}" && mv "$@" ;}
+mkcp() { mkdir "${@: -1}" && cp "$@" ;}
+mkmvcd() { mkmv "$@" && cd "${@: -1}" ;}
+mkcpcd() { mkcp "$@" && cd "${@: -1}" ;}
+mkmvcdls() { mkmvcd "$@" && ls ;}
+mkcpcdls() { mkcpcd "$@" && ls ;}
+
+cpcd() { cp "$@" && cd "${@: -1}" ;}
+cpcdls() { cpcd "$@" && ls ;}
+
+cdls() { cd $1 && ls ;}
+
+mvcd() { mv "$@" && cd "${@: -1}" ;}
+mvls() { mv "$@" && ls ;}
+mvcdls() { mvcd "$@" && ls ;}
+
+# copy and paste files betwen directories
+clipboard=/tmp/my_clipboard
+ctrlc() {
+    mkdir -p $clipboard
+    rm $clipboard/*
+    cp "$@" $clipboard
+}
+ctrlx() {
+    mkdir -p $clipboard
+    rm $clipboard/*
+    mv "$@" $clipboard/
+}
+ctrlv() {
+    cp $clipboard/* .
+}
+clipboard() {
+    ls $clipboard
+}
+
+# add current directory to path 
+addpypath() { export PYTHONPATH=$(pwd):$PYTHONPATH ;}
+addpath() { export PATH=$(pwd):$PATH ;}
+
+# Store an old version of a file or directory
+store() {
+    mv {,_}$1
+}
+restore() {
+   \mv $1 ${1#_}
+}
+swapstore() {
+    mv {,__}$1
+    restore _$1
+    restore __$1
+}
+
+# extract and archibe/compressed file based on extension
+extract() { 
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xvjf $1     ;;
+            *.tar.gz)    tar xvzf $1     ;;
+            *.bz2)       bunzip2 $1      ;;
+            *.rar)       Unrat x $1      ;;
+            *.gz)        gunzip $1       ;;
+            *.tar)       tar xvd $1      ;;
+            *.tbz2)      tar xvjf $1     ;;
+            *.tgz)       tar xvzf $1     ;;
+            *.zip)       unzip $1        ;;
+            *.Z)         uncompress $1   ;;
+            *.7z)        7z x $1         ;;
+            *)           echo "'$1' cannot be extracted via >extract<" ;;
+       esac
+   else
+       echo "'$1' is not a valid file!"
+   fi
+}
+
+maketar() { tar cvzf "${1%%/}.tar.gz" "${1%%/}/"; }
+makezip() { zip -r "$1".zip "$1" ; }  
+calc() { python -c "from __future__ import division; from math import *; print ($*)" ; }
+
+# Move up n directories
+up() {
+    local var=$1
+    local str=""
+    if ! [[ $var =~ ^[0-9]+$ ]] ; then
+        echo "error: Not a number" 
+        return
+    fi
+    while [ $var -gt 0 ] ; do
+        str+="../"
+        var=$(($var - 1))
+    done
+    cd $str && pwd
+}
+
+#search for a directory by recursively searching for it, going up a directory each time until it's found
+findcd_helper() {
+    local direc=$(find . -L -type d -name "$1" -quit 2>/dev/null)
+    if [ -d "$direc" ] ; then
+        cd $direc
+        return
+    else
+        if [ "$(pwd)" == "/" ] ; then
+            echo "error: Could not find folder $1"
+            return 1
+        fi
+        cd ../
+        echo "Folder not found. Searching again one level higher in $(pwd)"
+        findcd_helper $1
+     fi
+}
+findcd() {
+    local starting_dir=$(pwd)
+    findcd_helper $1 && cd $starting_dir
+}
+
+
+# Safety first
+alias cp="cp -ir"
+alias mv="mv -i"
+alias mkdir="mkdir -p"
+rm() {
+    files=()
+    for f in "$@" ; do
+        if [ -d "$f" ] ; then
+            echo "Are you sure you want to delete directory $f?"
+            read confirm
+            if [[ "$confirm" =~ ^([yY][eE][sS]|[yY])$ ]] ; then
+                command rm -r -- "$f"
+            fi
+        else
+            command rm -- "$f"
+        fi
+    done
+}
+

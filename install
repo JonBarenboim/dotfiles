@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# link dotfiles
+
+ln -s $(pwd)/bash_profile $HOME/.bash_profile
+ln -s $(pwd)/bashrc $HOME/.bashrc
+ln -s $(pwd)/prompt $HOME/.prompt
+ln -s $(pwd)/vimrc $HOME/.vimrc
+ln -s $(pwd)/lscolors $HOME/.lscolors
+ln -s $(pwd)/functions $HOME/.functions
+
+# install vim plugins
+cd ~
+mkdir -p .vim
+cd .vim
+mkdir -p bundle
+mkdir -p ftplugin
+mkdir -p ftplugin/python
+cd bundle
+git clone https://github.com/vim-airline/vim-airline.git
+git clone https://github.com/moll/vim-bbye.git
+git clone https://github.com/tpope/vim-fugitive.git
+git clone https://github.com/tmhedberg/SimpylFold.git
+cp SimplyFold/ftplugin/python/SimplyFold.vim ../ftplugin/python
+
+
+scp -r ${target}vertical_resolution/test3/run/GIF_MOVIE vertical_resolution/test3
