@@ -1,0 +1,228 @@
+" TODOs
+" Figure out autoformatting stuffs
+" Incorporate plugin code into vimrc/script it simple enought
+" Set gui cursor/search
+" In Tagbar, automatically sort by position
+" GUI STUFF:
+"   Can be place in a .gvimrc
+"   In all highlight satements, use gui=NONE to remove bolding
+"   Just...less colours overall
+"   hi NonText guibg=black
+"   Cursor styles
+"   Menus
+"   Highlight cursor line as an underline
+" Colour schemes for Tagbar, airline, and NERDTree
+" Use Vundle for plugins
+"
+"
+set nocompatible
+syntax on
+filetype plugin indent on
+let mapleader = ','
+
+""""" Plugins
+"vim-airline
+let g:airline_powerline_fonts=1
+set noshowmode
+
+"vim-airline-themes (???)
+
+"vim-fugitive
+
+"vim-bbye
+nnoremap <leader>n :bn<CR>
+nnoremap <leader>b :bp<CR>
+nnoremap <leader>q :Bdelete<CR>
+
+"vim-searchant
+highlight SearchCurrent ctermbg=red
+
+"vim-ini-fold
+
+"tagbar
+nnoremap <F1> :TagbarOpenAutoClose<CR>
+nnoremap <F2> :TagbarToggle<CR>
+augroup TagBar
+    autocmd!
+    autocmd BufEnter * nested :call tagbar#autoopen(0)
+augroup END
+
+"indentLine
+" Show by default for python and vimscript files
+let g:indentLine_enabled = 1 
+let g:indentLine_filetpe = ['python', 'vim']
+
+"nerdtree
+" Open NERDTree if vim was opened without a file or when opening a directory
+augroup NERDTree
+    autocmd!
+    autocmd VimEnter * if @% == "" | NERDTree | endif
+    autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) | exe 'NERDTree' argv()[0] | endif
+augroup END
+let g:NERDTreeShowBookmarks=1 
+let g:NERDTreeShowHidden=1
+" single click to expand directory, double click to open file
+let g:NERDTreeMouseMode=2
+nnoremap <F3> :NERDTreeToggle<CR>
+nnoremap <F4> :NERDTreeCWD<CR>
+
+
+"vim-mundo
+" Show a small diff to the right of each node inside the graph
+let g:mundo_inline_undo=1
+nnoremap <F4> :MundoToggle<CR>
+
+""""" Vim options
+set autoindent smartindent                  " Automatically indent lines
+set autoread                                " Autoread file if it is changed outside of vim
+set backspace=indent,eol,start              " Better backspace
+set expandtab tabstop=4 shiftwidth=4        " Expand tabs into 4 spaces 
+set hidden                                  " Allow buffers to be backgrounded without being unloaded
+set hlsearch                                " Highligh all search results
+set incsearch                               " Highlight search results as they are typed
+set ignorecase                              " Ignore case when searching
+set laststatus=2                            " Always show status bar
+set mouse=a                                 " Allow mouse in all modes
+set nostartofline                           " Don't return cursor to first column when moving between lines
+set number                                  " Show line numbers
+set pastetoggle=<C-p>                       " Toggle paste mode
+set scrolloff=2                             " Always leave 2 lines below and above cursor
+set showcmd                                 " Show command as it is being type
+set showmatch                               " Show matching brackets
+set splitright                              " Place new window to the right of the current one
+" set ttimeoutlen=50                          " Wait 50ms for a mapping sequence or command to complete
+set virtualedit=onemore                     " Allow the cursor to go one character past the end of the line
+set visualbell t_vb=                        " Turn off bell
+set wildmenu                                " Visual completion for files and commands
+set whichwrap="b,s,h,l,<,>,[,]"             " Allow arrow keys, h/l, backspace, and space to wrap lines
+if v:version >= 704
+    set wildignorecase                      " Ignore case when completing file names
+    set undofile                            " Store undo history. Allows undoing after closing and reopening a file
+    set undodir=~/logs/vim_undo_hist        " Where to store undo history files
+endif
+
+""""" Copy 
+" Toggle copy to clipboard
+"
+" Toggle paste mode
+set pastetoggle=<F12>
+" Toggle copy to clipboard
+
+
+""""" Autoformatting
+set formatoptions+=r                        " Insert comment leader after hitting <Enter>
+set formatoptions+=o                        " Insert comment leader after entering insert mode with 'o' or 'O'
+set formatoptions-=t                        " DO NOT autowrap long text
+set formatoptions-=a                        " DO NOT auto format paragraphs
+set formatoptions+=n                        " Recognize numbred lists
+
+""""" Commands
+" Change case off search terms
+command! -nargs=+ ToUpper :%s/\(<args>\)/\U\1/g
+command! -nargs=+ ToLower :%s/\(<args>\)/\L\1/g
+" Ugh
+command! W :w
+command! Q :q
+
+""""" Set Filetype for Certain Files
+augroup SetFileType
+   autocmd!
+   autocmd BufRead,BufEnter .?RProfile let &filetype=r
+   autocmd BufRead,BufEnter .?(lscolors|functions|alias|prompt) let &filetype=sh
+augroup END
+
+""""" Autosave
+" Save file (if it exists and is writable) after 5 seconds of inactivity
+set nobackup noswapfile updatetime=5000
+function! SetAutoSave()
+    if @% != "" && filewritable(@%) && ! &readonly && &modifiable
+        autocmd CursorHold,CursorHoldI <buffer> write
+    endif
+endfunction
+augroup SetAutoSave
+    autocmd!
+    autocmd BufRead,BufNewFile * call SetAutoSave()
+augroup END
+
+""""" Folding
+" Eanble folding for Python and ini files, otherwise disable. Open all folds by default
+augroup Folding
+    autocmd!
+    autocmd FileType dosini,python <buffer> set foldenable foldlevel=99 foldcolumn=3
+    autocmd FileType python <buffer> set foldmethod=expr foldexpr=SimpylFold(v:lnum)
+augroup END
+
+""""" Key Mappings
+" Move between screen lines when line is wrapped
+nnoremap j gj
+nnoremap k gk
+" Page up/down
+nnoremap <C-K> <C-B>
+inoremap <C-K> <C-O><C-B>
+nnoremap <C-J> <C-F>
+inoremap <C-J> <C-O><C-F>
+" Half page up/down
+nnoremap <S-J> <C-D>
+nnoremap <S-K> <C-U>
+" Beginning and end of line
+nnoremap <C-H> 0
+inoremap <C-H> <C-O>0
+nnoremap <C-L> $
+inoremap <C-L> <C-O>$
+
+" Commands from insert mode
+inoremap <C-S> <C-O>
+
+" Jump between windows in insert mode. Only sometimes works :/
+inoremap <C-W> <C-O><C-W>
+
+" Emacs bindings in command mode
+cnoremap <C-A> <home>
+cnoremap <C-E> <end>
+
+" Leep search matches in the middle of the screen
+nnoremap n nzz
+nnoremap N Nzz
+
+" Show full path of File
+nnoremap <C-G> 1<C-G>
+
+
+""""" Toggle tabs on and off
+" TabsOn -> Tabs stay as tabs
+" TabsOff -> Tabs converted to spaces
+" TabsToggle -> Toggle
+command! -nargs=0 TabsToggle :set invexpandtab
+command! -nargs=0 TabsOn :set noexpandtab
+command! -nargs=0 TabsOff :set expandtab
+
+
+""""" External Scripts
+" Commenting - see file for help
+source ~/.vim/scripts/comment.vim
+
+"""" air-line symbols 
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+    " unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 1
+let g:airline_detect_modified = 1
+let g:airline#extensions#branch#format = 0
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#tabline#buffer_nr_show = 1
+

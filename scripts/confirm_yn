@@ -1,0 +1,34 @@
+#!/bin/bash
+helpstr='
+Prompt user and read in yes or no.
+
+Usage: 
+    confirm_yn [prompt_str]
+
+Ask until yes or no is given and return 0 for yes and 1 for no.
+If a string is given, print the string as the prompt, otherwise quietly wait for an answer
+'
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ] ; then
+    echo "helpstr"
+    exit 0
+fi
+
+yes='^[yY]([eE][sS])?$'
+no='^[nN][oO]?$'
+
+if [ "$1" ] ; then
+    echo "$1 [y|n]"
+fi
+
+read confirm
+while ! [[ "$confirm" =~ $yes || "$confirm" =~ $no ]] ; do
+    echo "Invalid option. Please enter y[es] or n[o]"
+    read confirm
+done
+
+if [[ "$confirm" =~ $yes ]] ; then
+    exit 0
+else
+    exit 1
+fi

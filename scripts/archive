@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Usage:
+# archive archive_file file [file...]
+# archive_file must end with file extension of an archive format
+
+if [ $# -lt 2 ] ; then
+    echo "error: Not enough arguments given."
+    echo "usage: archive archive_file file [files]
+    exit 1
+fi
+case $1 in
+    *.tar.bz2) ;;
+    *.tar.gz) ;;
+    *.bz2) ;;
+    *.rar) ;;
+    *.gz) ;;
+    *.tar) ;;
+    *.tbz2) ;;
+    *.tgz) ;;
+    *.zip)  zip "$@" ;;
+    *.Z) ;;
+    *.7Z) ;;
+    *)
+        echo "error: Could not recognize an archival method in $1" ;;
+        exit 1 ;;
+esac

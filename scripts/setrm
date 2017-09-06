@@ -1,0 +1,99 @@
+#!/bin/bash
+helpstr='
+Set behaviour or the `rm` command
+
+Usage:
+  setrm [method]
+
+Method is one of:
+  glob        Confirm before deleting files/directories matched by wildcard expansion
+  trash       Move files, if small enough, to a trash directory
+  directory   Confirm before deleting a directory
+  warn        Always prompt
+  base        Never prompt
+  glob_dir    Confirm directories and before deleting results of wildcard expansion
+Note that all methods are recursive
+If a method is not given, print the current method and exit
+
+Environment Variables:
+  TRASHDIR        directory to move items to trash to. If unset, /tmp/$(whoami)/trash
+  MAXTRASHSIZE    Maximum size of file/dir to move to trash, in bytes. If unset, 104857600 (100mb)
+'
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ] ; then
+    echo "$helpstr"
+    return 0
+fi
+
+rm_glob() {
+    # turn globbing back on
+    set +f
+    for str in "$@" ; do
+        if [[ "$str" =~ [\?\*] ]] ; then # string has wildcards
+            echo "Are you sure you want to delete the following files/directories?"
+            echo $str
+            if ~/bin/scripts/confirm_yn; then
+                command rm -r -- $str
+            fi
+        else
+            command rm -r -- $str
+        fi
+    done
+}
+
+rm_trash() {
+    trash=${TRASHDIR:-/tmp/$(whoami)/trash}
+    max_trash=${MAXTRASHSIZE:-104857600}
+    for str in "$@" ; do
+        if [ $(\du -s $f | awk '${print $1}') -gt $max_trash ] ; then
+            confirm_yn "File/directory $1 too large to move to trash. Delete permenently?" && command rm -r -- $str
+        else
+            mv $1 $trash
+        fi
+    done
+}
+
+rm_directory() {
+    for str in "$@" ; do
+        if [ -d "$str" ] ; then
+            conifrm_yn "Are you sure you want to delete directory $str?" && command rm -r -- $str
+        else
+            command rm -- $str
+        fi
+    done
+}
+
+rm_glob_dir() {
+    set +f
+    for str in "$@" ; do
+        if [[ "$str" =~ [\?\*] ]] ; then 
+            echo "Are you sure you want to delete the following files/directories?"
+            echo "$str"
+            comfirm_yn && command rm -r -- $str
+         elif [ -d "$str" ] ; then
+            confirm_yn "Are you sure you want to delete directory $str?" && command rm -r -- $str
+         else
+             command rm -- $str
+         fi
+    done
+}
+
+[ -z "$1" ] && type rm && return 0
+
+case $1 in 
+    glob)
+        alias rm="set -f; rm_glob" ;;
+    trash)
+        alias rm="rm_trash" ;;
+    directory)
+        alias rm="rm_directory" ;;
+    warn)
+        alias rm="rm -ir" ;;
+    base)
+        alias rm="rm -r" ;;
+    glob_dir)
+        alias rm="set -f; rm_glob_dir" ;;
+    *)
+        echo "Invalid option. Use one of 'glob', 'trash', 'directory', 'warn', 'base'"
+        return 1
+esac

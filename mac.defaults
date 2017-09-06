@@ -1,0 +1,38 @@
+# TODO: write settings for PRO
+# Terminal
+defaults write com.apple.Terminal "Default Window Settings" 'Pro'
+defaults write com.apple.Terminal "NSUserKeyEquivalents" -dict "About Terminal" '@q' # no more accidentally closing 20 terminal windows
+
+# Trackpad options
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "Clicking" '0'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "DragLock" '0'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "Dragging" '0'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadCornerSecondaryClick" '0'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadFourFingerHorizSwipeGesture" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadFourFingerNavigationHorizSwipeGesture" '0'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadFourFingerNavigationVertSwipeGesture" '0'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadFourFingerVertSwipeGesture" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadHandResting" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadHorizScroll" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadMomentumScroll" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadPinch" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadRightClick" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadRotate" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadScroll" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadThreeFingerDrag" '0'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "TrackpadThreeFingerSwipe" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "USBMouseStopsTrackpad" '0'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "UserPreferences" '1'
+defaults write com.aple.driver.AppleBluetoothMultitouch.trackpad "migrationDone" '1'
+
+# Finder
+defaults write com.apple.finder "ShowPathBar" '1'
+defaults write com.apple.finder "ShowHardDrivesOnDesktop" '1'
+defaults write com.apple.finder "ShowMountedServersOnDesktop" '1'
+
+# Ask for password
+defaults write com.apple.screensaver "askForPassword" '1'
+defaults write com.apple.screensaver "askForPasswordDelay" '60' 
+
+# Do not write DS_Store files on remotely mounted systems
+defaults write com.apple.desktopservices DSDontWriteNetworkStores true

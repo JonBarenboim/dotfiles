@@ -1,0 +1,38 @@
+#!/bin/bash
+helpstr='
+Recursively search for a directory and change directory to it.
+
+Usage:
+    findcd dir
+
+Start by searching recursively in the current location, and expand search
+by going up one directory until it is found
+'
+
+if [ $# == 0 ] ; then
+    echo 'No directory given. Usage `findcd file`'
+    exit 1
+fi
+if [ "$1" == "-h" ] || [ "$1" == "--help" ] ; then
+    echo "$helpstr" 
+    exit 0
+fi
+
+findcd_helper() {
+    local direc=$(find . -L -type d -name "$1" -quit 2>/dev/null)
+    if [ -d "$direc" ] ; then
+        cd $direc
+        return
+    else
+        if [ "$(pwd)" == "/" ] ; then
+            echo "error: Could not find folder $1"
+            return 1
+        fi
+        cd ../
+        echo "Folder not found. Searching again one level higher in $(pwd)"
+        findcd_helper $1
+     fi
+}
+local starting_dir=$(pwd)
+findcd_helper $1 && cd $starting_dir
+
