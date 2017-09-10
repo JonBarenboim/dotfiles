@@ -1,0 +1,113 @@
+########## FUNCTIONS ##########
+
+# moving around
+mkcd() { mkdir $1 && cd "${@: -1}" ;}
+mkmv() { mkdir "${@: -1}" && mv "$@" ;}
+mkcp() { mkdir "${@: -1}" && cp "$@" ;}
+mkmvcd() { mkmv "$@" && cd "${@: -1}" ;}
+mkcpcd() { mkcp "$@" && cd "${@: -1}" ;}
+mkmvcdls() { mkmvcd "$@" && ls ;}
+mkcpcdls() { mkcpcd "$@" && ls ;}
+
+cpcd() { cp "$@" && cd "${@: -1}" ;}
+cpcdls() { cpcd "$@" && ls ;}
+
+cdls() { cd $1 && ls ;}
+
+mvcd() { mv "$@" && cd "${@: -1}" ;}
+mvls() { mv "$@" && ls ;}
+mvcdls() { mvcd "$@" && ls ;}
+
+# copy and paste files betwen directories
+# ctrlc -> copy files to clipboard
+# ctrlx -> move files to clipboard
+# ctrlv -> copy files from clipboard
+# clipboard -> peek at contents of clipboard
+# uncoctrl -> restore previous contents of clipboard 
+export CLIPBOARD=/tmp/$(whoami)/clipboard
+ctrlc() {
+    rm _$CLIPBOARD #2> /dev/null
+    store $CLIPBOARD #2> /dev/null
+    mkdir $CLIPBOARD
+    cp -r "$@" $CLIPBOARD
+}
+ctrlx() {
+    rm _$CLIBOARD 2> /dev/null
+    store $CLIPBOARD 2> /dev/null
+    mkdir  $CLIPBOARD
+    rm $CLIPBOARD/* 2> /dev/null
+    mv "$@" $CLIPBOARD/
+}
+ctrlv() {
+    cp -r $CLIPBOARD/* .
+}
+clipboard() {
+    ls $CLIPBOARD
+}
+undoctrl() {
+    rm $CLIPBOARD
+    restore _$CLIPBOARD
+}
+
+# add current directory to path 
+addpypath() { export PYTHONPATH=$(pwd):$PYTHONPATH ;}
+addpath() { export PATH=$(pwd):$PATH ;}
+
+# Store an old version of a file or directory
+store() {
+    after_store="$(dirname $1)/_$(basename $1)"
+    if ! [ -f "$1" ]  && ! [ -d "$1" ]; then
+        echo "error: file $1 does not exist"
+        return 1
+    fi
+    if [ -f "$after_store" ] || [ -d "$after_store" ] ; then
+        echo "Storing existing version $after_store"
+        (store $after_store)
+    fi
+    mv $1 $after_store
+}
+# restore old version. If multiple stores exist they are restored as well
+# _file -> file
+# __file -> _file
+# etc
+restore() {
+    tmp=$(basename $1)
+    after_restore=$(dirname $1)/${tmp#_}
+    higher_store=$(dirname $1)/_$(basename $1)
+    mv -i $1 $after_restore && \
+    if [ -f "$higher_store" ] || [ -d "$higher_store" ] ; then
+        echo "Restoring existing version $higher_store"
+        (restore $higher_store)
+    fi
+}
+swapstore() {
+    swap_with=$(dirname $1)/_$(basename $1)
+    if ! [ -f "$swap_with" ] && ! [ -d "$swap_with" ] ; then
+        echo "error: stored file $swap_with does not exist"
+        return 1
+    fi
+    #TODO: handle the case where a file #swap_with.tmp exists
+    mv $swap_with $swap_with.tmp
+    mv $1 $swap_with
+    mv $swap_with.tmp $1
+}
+
+# python calculator. Use alias to turn off globbing so literal * can be passed to python
+alias calc="set -f; _calc "
+_calc() { python -c "from __future__ import division; from math import *; print ($*)" ; set +f ;}
+
+# Move up n directories. Default 1
+up() {
+    { [ -z "$1" ] && local var=1 ;} || local var=$1
+    local str=""
+    if ! [[ $var =~ ^[0-9]+$ ]] ; then
+        echo "error: Not a number" 
+        return
+    fi
+    while [ $var -gt 0 ] ; do
+        str+="../"
+        var=$(($var - 1))
+    done
+    cd $str && pwd
+}
+

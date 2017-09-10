@@ -1,0 +1,68 @@
+# turn off bell
+set bell-style none
+
+# highlight matching parenthesis with cursor
+set blink-matching-paren on
+
+# display common prefix of possible dompletions using a different colot
+set colored-completion-prefix on
+
+# use diferent colors to indicate their file type. Defined by LS_COLORS
+set colored-stats on
+
+# Perform file matching and completion in case-insensitive fashion
+set completion-ignore-case on
+
+# paste as string of characters instead of treating each character as having been read from keyboard.
+# Prevents pasted characters from being interpreted as commands
+set enable-bracketed-paste on
+
+# Do not insert characters from a completion if they match characters after the cursor
+set skip-completed-text on
+
+# Show a character at the beginning of the prompt to indicated editing mode
+set show-mode-in-prompt on
+
+##### READLINE MAPPINGS
+#Toggle overwrite mode 
+#overwrite-mode()
+#
+# KIll all characters on the current line
+# kill-whole-line()
+#
+# Incremental undo
+# undo()
+
+# Invoke and editor on the current command line
+# edit-and-execute-command()
+#
+# Perform alias expansion onthe current line
+# alias-expand-line()
+#
+# Perform history and alias expansion on the current line
+# history-and-alias-expand-line()
+
+
+
+##### Handy to know defaults:
+# C-a       move to start of line
+# C-e       move to end of line
+# M-f       Move forward to end of next word
+# M-b       Move back to start of current or previous word
+# M-<       Move to first line in history
+# M->       Move to end of input history, ie the line currently being entered
+# C-r       Reverse search
+# C-s       Forward search
+# C-d       Delete character under cursor (EOF if there is no character)       
+# C-t       Transpose characters behind and under the cursor
+# M-t       Transpose the words bhind and under the cursor
+# M-u       Uppercase the current word
+# M-l       Lowercase the following word
+# C-k       Kill line from cursor to end
+# C-x       Kill line from beginning to cursor
+# M-d       Kill word from cursor to end
+# M-DEL     Kill word from beginning to cursor
+# C-g       Abort the current editing command and ring the bell
+# C-x C_u       Incremental Undo
+# C-x C-e   Invoke an editor on the current command line 
+# M-C-e     Expand the line as the shell does

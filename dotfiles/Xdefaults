@@ -1,0 +1,3 @@
+/* backspace sends ^? instead of ^h so the latter can be used as a mapping in vim */
+xTerm*ttyModes: erase ^? 
+

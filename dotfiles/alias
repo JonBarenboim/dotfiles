@@ -1,0 +1,76 @@
+########## ALIASES ##########
+
+### SAFETY FIRST 
+alias cp="cp -ir"
+alias mv="mv -i"
+alias mkdir="mkdir -p"
+
+### RM
+# see ~/bin/setrm for details
+# Alias for setrm is required to ensure alias for rm is properly set
+alias setrm='source setrm '
+which setrm &> /dev/null && setrm trash
+
+
+### TREES ###
+# Directories
+alias tree='find . -maxdepth 5 -type d | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"'
+# Directories and files
+alias treef='find . -maxdepth 3 | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"'
+# Directories; no depth limit
+alias fulltree='find . -type d | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"'
+# Directories and files; no depth limit
+alias fulltreef='find . | sed -e "s/[^-][^\/]*\//  |/g" -e "s/|\([^ ]\)/|-\1/"'
+
+
+### DEFAULT OPTIONS 
+alias du="du -hs"
+alias df="df -h"
+alias type="type -a"
+alias R="R --quiet "
+
+### HANDY STUFF 
+# Allow aliases to be expanded with sudo
+alias sudo='sudo '
+# Print path with one item per line
+alias path='echo -e ${PATH//:/\\n}'
+# Start a timer
+alias stopwatch='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
+# Install python module locally
+alias piplocal='pip install --user'
+# Print most recently modified file
+alias catlast="cat $(ls -t | head -n 1)"
+
+
+### LS ALIASES 
+# mac
+if [ "$(uname)" == "Darwin" ] ; then
+    alias ls="ls -G "
+    alias ll="ls -l -t -h -H"
+    alias ld="ls -d */"
+    alias l.="ls -d .*"
+elif [[ "$(uname)" =~ "CYGWIN" ]] ; then
+    alias ls="ls --color=auto "
+    alias ll="ls -l -t -h -H"
+    alias ld="ls -d */"
+    alias l.="ls -d .*"
+#linux
+else
+    alias ls="ls --color=tty "
+    alias ll="ls -l -t -h -H --group-directories-first"
+    alias ld="ls -d */"
+    alias l.="ls -d .*"
+fi
+
+### TYPOS ###
+alias where="which"
+alias l="ls"
+alias sl="ls"
+alias cd..="cd .."
+alias cd.="cd .."
+alias up2="up 2"
+alias up3="up 3"
+alias up4="up 4"
+alias up5="up 5"
+alias ca="cat"
+

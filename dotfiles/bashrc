@@ -1,0 +1,51 @@
+# Exit on non-interactive
+[ -z "$PS1" ] && return
+
+# Source global definitions
+[ -f /etc/bashrc ] && . /etc/bashrc
+
+########### TERMINAL ##########
+# Note: never do this
+[ "$TERM" == "xterm" ] && export TERM=xterm-256color
+
+
+########### ENVIRONMENT VARIABLES ##########
+export PATH=$HOME/bin/:$PATH
+export PATH=$HOME/help:$PATH
+export EDITOR=vim
+export HISTSIZE=10000
+export HISTCONTROL="ignoredups"
+export IGNOREEOF=2 # ignore Crtl-D 2 times before logging out
+export HISTFILE=~/logs/bash_history  # save bash history to ~/logs directory
+export HISTTIMEFORMAT="%F %T %t "
+export LESSHISTFILE=-   # Don't store `less` history
+export MANPAGER=less
+
+
+########## SHELL OPTIONS ##########
+# Note: some options may only be available with bash 4+
+shopt -s autocd         # change directory by entering the path as the command
+shopt -s cdspell        # autocorrect minor errors in arguments passed to cd
+shopt -s checkjobs      # list jobs before exiting
+shopt -s checkwinsize   # update COLUMNS and LINES after every command
+shopt -s cmdhist        #save all lines of multiline command as one entry
+shopt -s dirspell       # autocorrect minor errors in directories during completion
+shopt -s dotglob        # include hidden files in pathname expansion
+shopt -s extglob        # use extended globbing
+shopt -s globstar       # ** expands directories and subdirectories
+shopt -s histverify     # enter history substitution (`!histnumber`) to ReadLine instead of shell
+shopt -s nocaseglob     # case insensitive completion
+shopt -u nullglob       # return pattern if it fails to match any files
+set -b                  # Print status of terminated jobs immediately
+stty -ixon              # Turn off start/stop output
+
+
+########## OTHER DOTFILES ##########
+# Note: .alias must be sourced BEFORE .functions so aliases can be expanded 
+[ -f '.alias' ] && . ./.alias
+[ -f '.functions' ] && . ./.functions
+[ -f '.prompt' ] && . ./.prompt
+[ -f '.lscolors' ] && . ./.lscolors
+[ -f '.bashrc.local' ] && . ./.bashrc.local
+[ "$(uname)" == "Darwin" ] && [ -f ".bashrc.mac" ] && . ./.bashrc.mac
+

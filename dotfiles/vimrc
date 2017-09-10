@@ -1,0 +1,217 @@
+"TODOs
+" In Tagbar, automatically sort by position
+" In mycolors: add gui colors. Remove bolding, hi link NonText Normal, cursor styles, menys, highlight cursor line as underline
+" Colour schemes for tagbar, airline, NERDtree
+
+set nocompatible
+syntax on
+filetype plugin indent on
+let mapleader = ','
+
+""""" Vim Options
+set autoindent smartindent              " Automatically indent lines
+set autoread                            " Autoread file if changed outside vim
+set backspace=indent,eol,start          " Better backspace
+set expandtab tabstop=4 shiftwidth=4    " Expand tabs into 4 spaces
+set hidden                              " Allow buffers to be backgrounded without being unloaded
+set hlsearch                            " Highlight all search results
+set incsearch                           " Highlight search results as they are typed
+set ignorecase                          " Ignore case when searching
+set laststatus=2                        " Always show status line
+set mouse=a                             " Allow mouse in all modes
+set noshowmode                          " Don't show vim mode. Will be shown by Airline
+set nostartofline                       " Don't return cursor to first column after commands
+set number                              " Show line numbers
+set pastetoggle=<C-p>                   " Toggle paste mode
+set scrolloff=2                         " Always leave 2 lines below and above cursor
+set showcmd                             " Show command as it's being typed
+set showmatch                           " Show matching brackets
+set splitright                          " Place new windows to the right of the current one
+set virtualedit=onemore                 " Allow the cursor to go one character past the end of the line
+set visualbell t_vb=                    " Turn off bell
+set wildmenu                            " Vistual completion for files and commands
+set whichwrap="b,s,h,l,<,>,[,]"         " Allow arrow keys, h/l, backspace, space to wrap lines
+if v:version >= 704
+    set wildignorecase                  " Ignore case when completing file names
+    set undofile                        " Store undo history after closing a file
+    set undodir=~/logs/vim_undo_hist    " Where to store undo history files
+endif
+
+""""" plugins and options
+set runtimepath^=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'vim-airline/vim-airline'
+let g:airline_powerline_fonts=1
+
+Plugin 'moll/vim-bbye'
+nnoremap <leader>n :bn<CR>
+nnoremap <leader>b :bp<CR>
+nnoremap <leader>q :Bdelete<CR>
+
+Plugin 'tpope/vim-fugitive'
+Plugin 'tmgedberg/SimpylFold'
+Plugin 'matze/vim-ini-fold'
+Plugin 'timakro/vim-searchant'
+autocmd FileType * highlight SearchCurrent ctermbg=red
+
+Plugin 'scrooloose/nerdtree'
+nnoremap <F3> :NERDTreeToggle<CR>
+" Change NERD tree to current directory
+nnoremap <F4> :NERDTreeCWD<CR>
+let g:NERDTreeShowBookmarks=1
+let g:NERDTreeShowHidden=1
+" single click to expand directory, double click to open file
+let g:NERDTreeMouseMode=2
+" Open NERDTree if vim was openend without a file or when opening a directory
+augroup NERDTree
+    autocmd!
+    autocmd VimEnter * if @% == "" | NERDTree | endif
+    autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) | exe 'NERDTree' argv()[0] | endif
+augroup END
+
+Plugin 'majutsushi/tagbar'
+nnoremap <F1> :TagbarOpenAutoClose<CR>
+nnoremap <F2> :TagbarToggle<CR>
+
+Plugin 'Yggdroot/intendline'
+" Show by default for python and vimscript files
+let g:indentLine_endabled = 1
+let g:indentLIne_filetype = ['python', 'vim']
+
+Plugin 'simnalamburt/vim-mundo'
+nnoremap <F5> :MundoToggle<CR>
+" Show a small diff to the right of each node inside the graph
+let g:mundo_inline_undo=1
+
+call vundle#end()
+
+""""" Key Mappings
+" Move between screen lines when line is wrapped
+nnoremap j gj
+nnoremap k gk
+" Page up/down
+nnoremap <C-K> <C-B>
+inoremap <C-K> <C-O><C-B>
+nnoremap <C-J> <C-F>
+inoremap <C-J> <C-O><C-F>
+"Half page up/down
+nnoremap <S-J> <C-D>
+nnoremap <S-K> <C-U>
+"Beginning and end of line
+nnoremap <C-H> 0
+inoremap <C-H> <C-O>0
+nnoremap <C-L> $
+inoremap <C-L> <C-O>$
+
+" Commands from insert mode
+inoremap <C-S> <C-O>
+
+" jump between windows in insert mode
+inoremap <C-w> <C-O><C-w> 
+
+" Emacs bindings in command line mode
+cnoremap <C-a> <home>
+cnoremap <C-e> <end>
+
+"keep search matches in the middle of the window
+nnoremap n nzz
+nnoremap N Nzz
+
+"show full path of file
+nnoremap <C-G> 1<C-G> 
+""""" Color scheme
+
+augroup ColorScheme
+    autocmd!
+    " autocmd FileType * :syntax on | colo mycolors
+    " autocmd FileType vim :colo vim.mycolors
+    " autocmd FileType '' syntax off
+augroup END
+
+""""" Commands
+command! -nargs=+ ToUpper :%s/\(<args>\)/\U\1/g
+command! -nargs=+ ToLower :%s/\(<args>\)/\L\1/g
+
+" TabsOff -> Tabs converted to spaces
+" TabsOn -> Tabs stay as Tabs
+command! -nargs=0 TabsToggle :set invexpandtab
+command! -nargs=0 TabsOn :set noexpandtab
+command! -nargs=0 TabsOff :set expandtab
+
+" Ugh
+command! W :w
+command! Q :q
+
+""""" autosave
+" Save file (if it is writable and exists in file system) after 5 seconds of inactivity
+set nobackup
+set noswapfile
+set updatetime=5000
+function! SetAutoSave()
+    if @% != "" && filewritable(@%) && ! &readonly && &modifiable
+        autocmd CursorHold,CursorHoldI <buffer> write
+    endif
+endfunction
+augroup SetAutoSave
+    autocmd!
+    autocmd BufRead,BufNewFile * call SetAutoSave()
+augroup END
+
+""""" autoformatting 
+set formatoptions+=r   "insert comment leader after hitting <Enter>
+set formatoptions-=t   " DO NOT autowrap long text
+set formatoptions+=o   " insert comment leader after hitting 'o' or 'O'
+set formatoptions-=a   " DO NOT auto format paragraphs
+set formatoptions+=n   " recognize numbered lists
+
+"""""" set filetype
+augroup SetFileType
+    autocmd!
+    autocmd BufRead,BufEnter ?Rprofile set filetype=r 
+    autocmd BufRead,BufEnter ?lscolors,?functions,?alias,?prompt set filetype=sh 
+augroup END
+
+"""""" folding
+" Enable folding for python and ini files. Open all folds by defualt
+augroup Folding
+    autocmd!
+    autocmd FileType dosini,python <buffer> set foldenable foldlevel=99 foldcolumn=3
+    autocmd FileType python <buffer> set foldmethod=expr foldexpr=SimpylFold(v:lnum)
+augroup END
+
+"""""External scripts
+"commenting - see file for help
+source ~/.vim/scripts/comment.vim
+
+""""" air-line symbols 
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+    " unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 1
+let g:airline_detect_modified = 1
+let g:airline#extensions#branch#format = 0
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#tabline#buffer_nr_show = 1
+
+
+""""" see highlight group of the word under the cursor
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
