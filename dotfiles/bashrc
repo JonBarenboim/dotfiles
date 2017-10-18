@@ -34,6 +34,7 @@ shopt -s dotglob        # include hidden files in pathname expansion
 shopt -s extglob        # use extended globbing
 shopt -s globstar       # ** expands directories and subdirectories
 shopt -s histverify     # enter history substitution (`!histnumber`) to ReadLine instead of shell
+shopt -s histappend     # append to history file
 shopt -s nocaseglob     # case insensitive completion
 shopt -u nullglob       # return pattern if it fails to match any files
 set -b                  # Print status of terminated jobs immediately

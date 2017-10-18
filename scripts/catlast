@@ -1,0 +1,97 @@
+#!/bin/bash
+
+helpstr='USAGE:
+catlast [qh] [-n NUM] [-s NUM] [-f [NUM]] [-t [NUM]] [-a NUM]
+
+Print contents of most recently modified file(s)
+Note: requires `fls`
+
+OPTIONS:
+-n N       print N most recently modified files. Default 1
+-s N       start at Nth most recent file. Default 1
+-f [N]     if given, contents of each file will be piped to `head`
+           if N is specified, first N lines will be printed, otherwise `head` default is used
+-t [N]     if given, contents of each file will be piped to `tail`
+           if N is specified, last N lines will be printed, otherwise `tail` default is used
+-a N       if given, contents of each file will be pipe to tail with the -n +NUM option
+           contents starting with the Nth line will be printed
+-q         do not print file names
+-h         display this help and exit
+
+Note that the -t, -f, and -a flags can be combined. The `head` and `tail`
+     commands are called in the order the flags are given
+
+EXAMPLES:
+catlast                     
+catlast -n 2 -s 3         # print the 3rd and 4th most recent file
+catlast -a 10 -f 10       # print lines 10 through 20 of the most recent file
+catlast -n 3 -t           # Print the last 10 lines of the 3 most recent files
+catlast -f 10 -t 5 -f 1   # Print the 6th line of the most recent file
+'
+
+err() {
+    echo "$1" >&2
+    exit 1
+}
+
+# Exit if fls not found
+if ! which fls &> /dev/null ; then
+    err "fls not found. Please install fls"
+fi
+
+# Default options
+num_files=1
+start_at=1
+pipe_str=()
+print_name=true
+
+while getopts 'hqn:s:fta:' opt ; do
+    # Some flags *might* be followed by arguments and this case must be checked manually
+    # Get the next word, which might be an argument
+    params=($@)
+    next_arg=${params[$((OPTIND - 1))]}
+  
+    # Handle flags
+    case $opt in
+        h) echo "$helpstr" ; exit ;;
+        n) num_files=$OPTARG ;;
+        s) start_at=$OPTARG ;;
+        f) 
+            # Check if next_arg is an argument to the -f flag. 
+            # If yes, OPTIND must be incremented to skip over the argument
+            if [[ $next_arg =~ ^[0-9]+$ ]] ; then
+                pipe_str+="| head -n $next_arg "
+                OPTIND=$((OPTIND + 1))
+            else 
+                pipe_str+="| head "
+            fi 
+            ;;
+        t)
+            if [[ $next_arg =~ ^[0-9]+$ ]] ; then
+                pipe_str+="| tail -n $next_arg "
+                OPTIND=$((OPTIND + 1))
+            else
+                pipe_str+="| tail "
+            fi
+            ;;
+        a)
+            if [[ $OPTARG =~ ^[0-9]+$ ]] ; then
+                pipe_str+="| tail -n +$OPTARG " 
+            else
+                err "Argument to -a must be a number"
+            fi
+            ;;
+        q) print_name=false ;;
+        \?) exit 1 ;;
+    esac
+done
+
+# Print each file, seperarated by a header
+for f in $(fls -t f | tail -n +$start_at | head -n $num_files) ; do
+    $print_name && echo "--- $f ---"
+    
+    # Since $f is always the name of a file and 
+    # pipe_str is always either tail or head and we checked that the arguments are numbers
+    # it should be safe to use eval
+    eval "cat $f ${pipe_str[@]}"
+done

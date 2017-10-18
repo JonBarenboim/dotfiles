@@ -1,15 +1,18 @@
 options(repos = c(CRAN = "http://cran.utstat.utoronto.ca/"))
-options(max.print=100)
+options(max.print=50)
 options(prompt="R> ")
 options(continue="...")
 options(digits.secs=1) # number of digits when printing a number formatted as seconds
-options(error=traceback)
+#options(error=traceback)
+options(show.error.messages=TRUE)
 options(show.error.locations=TRUE) # print source location of most recent call in error stack
+options(nwarnings=10)
 options(editor="vim")
 
 if ((cols <- Sys.getenv("COLUMNS")) != "") {
     options(width=as.integer(cols))
 }
+rm(cols)
 
 .First <- function() {
     getwd()
@@ -28,14 +31,19 @@ if ((cols <- Sys.getenv("COLUMNS")) != "") {
     }
 }
 
-mv <- function(old, new){
+.mv <- function(old, new){
     new.name <- as.character(substitute(new))
     old.name <- as.character(substitute(old))
     assign(new.name, old, parent.frame())
     rm(old, envir=parent.frame()) #TODO fix this call
 }
 
-lib <- function(package) {
+.lib <- function(package) {
     suppressPackageStartupMessages(library(package))
 }
 
+# devtools shorcuts
+.l <- devtools::load_all
+.d <- devtools::document
+.t <- devtools::test
+ 

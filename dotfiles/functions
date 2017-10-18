@@ -18,35 +18,38 @@ mvcd() { mv "$@" && cd "${@: -1}" ;}
 mvls() { mv "$@" && ls ;}
 mvcdls() { mvcd "$@" && ls ;}
 
+
 # copy and paste files betwen directories
 # ctrlc -> copy files to clipboard
 # ctrlx -> move files to clipboard
 # ctrlv -> copy files from clipboard
 # clipboard -> peek at contents of clipboard
-# uncoctrl -> restore previous contents of clipboard 
-export CLIPBOARD=/tmp/$(whoami)/clipboard
+# [ctrlc|ctrlv] -c -> add contents to clipboard instead of replacing
+export CLIPBOARD=~/.clipboard
+#export CLIPBOARD=/tmp/$(whoami)/clipboard
 ctrlc() {
-    rm _$CLIPBOARD #2> /dev/null
-    store $CLIPBOARD #2> /dev/null
-    mkdir $CLIPBOARD
-    cp -r "$@" $CLIPBOARD
+    if [ "$1" == "-c" ] ;then
+        shift
+    else
+        [ -d "$CLIPBOARD" ] && \rm -r $CLIPBOARD 
+    fi
+    mkdir -p $CLIPBOARD
+    \cp -r "$@" $CLIPBOARD/
 }
 ctrlx() {
-    rm _$CLIBOARD 2> /dev/null
-    store $CLIPBOARD 2> /dev/null
-    mkdir  $CLIPBOARD
-    rm $CLIPBOARD/* 2> /dev/null
-    mv "$@" $CLIPBOARD/
+    if [ "$1" == "-c" ] ; then
+        shift
+    else
+        [ -d "$CLIPBOARD" ] && \rm -r $CLIPBOARD 
+    fi
+    mkdir -p $CLIPBOARD
+    \mv "$@" $CLIPBOARD/
 }
 ctrlv() {
     cp -r $CLIPBOARD/* .
 }
 clipboard() {
     ls $CLIPBOARD
-}
-undoctrl() {
-    rm $CLIPBOARD
-    restore _$CLIPBOARD
 }
 
 # add current directory to path 
@@ -86,10 +89,9 @@ swapstore() {
         echo "error: stored file $swap_with does not exist"
         return 1
     fi
-    #TODO: handle the case where a file #swap_with.tmp exists
-    mv $swap_with $swap_with.tmp
+    mv $swap_with ~.$swap_with
     mv $1 $swap_with
-    mv $swap_with.tmp $1
+    mv ~.$swap_with $1
 }
 
 # python calculator. Use alias to turn off globbing so literal * can be passed to python

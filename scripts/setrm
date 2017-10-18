@@ -31,12 +31,12 @@ rm_glob() {
     for str in "$@" ; do
         if [[ "$str" =~ [\?\*] ]] ; then # string has wildcards
             echo "Are you sure you want to delete the following files/directories?"
-            echo $str
+            echo "$str"
             if ~/bin/scripts/confirm_yn; then
-                command rm -r -- $str
+                command rm -r -- "$str"
             fi
         else
-            command rm -r -- $str
+            command rm -r -- "$str"
         fi
     done
 }
@@ -44,11 +44,12 @@ rm_glob() {
 rm_trash() {
     trash=${TRASHDIR:-/tmp/$(whoami)/trash}
     max_trash=${MAXTRASHSIZE:-104857600}
-    for str in "$@" ; do
-        if [ $(\du -s $f | awk '${print $1}') -gt $max_trash ] ; then
-            confirm_yn "File/directory $1 too large to move to trash. Delete permenently?" && command rm -r -- $str
+    mkdir -p "$trash"
+    for f in "$@" ; do
+        if [ $(\du -s "$f" | awk '{print $1}') -gt $max_trash ] ; then
+            confirm_yn "File/directory $f too large to move to trash. Delete permenently?" && command rm -r -- "$f"
         else
-            mv $1 $trash
+            mv "$f" "$trash"
         fi
     done
 }
@@ -56,9 +57,9 @@ rm_trash() {
 rm_directory() {
     for str in "$@" ; do
         if [ -d "$str" ] ; then
-            conifrm_yn "Are you sure you want to delete directory $str?" && command rm -r -- $str
+            conifrm_yn "Are you sure you want to delete directory $str?" && command rm -r -- "$str"
         else
-            command rm -- $str
+            command rm -- "$str"
         fi
     done
 }
@@ -69,16 +70,16 @@ rm_glob_dir() {
         if [[ "$str" =~ [\?\*] ]] ; then 
             echo "Are you sure you want to delete the following files/directories?"
             echo "$str"
-            comfirm_yn && command rm -r -- $str
+            comfirm_yn && command rm -r -- "$str"
          elif [ -d "$str" ] ; then
-            confirm_yn "Are you sure you want to delete directory $str?" && command rm -r -- $str
+            confirm_yn "Are you sure you want to delete directory $str?" && command rm -r -- "$str"
          else
-             command rm -- $str
+             command rm -- "$str"
          fi
     done
 }
 
-[ -z "$1" ] && type rm && return 0
+[ -z "$1" ] && type rm | head -n 1 && return 0
 
 case $1 in 
     glob)

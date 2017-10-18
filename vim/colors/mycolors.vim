@@ -7,25 +7,25 @@ endif
 
 """ gui 
 hi Normal           ctermfg=white   guifg=white   ctermbg=black              guibg=black 
-hi Folded                                         ctermbg=gray30             guibg=gray30
-hi FoldColumn       ctermfg=white   guifg=white   ctermbg=gray30             guibg=gray30
-hi IncSearch                                      ctermbg=steelblue          guibg=steelblue
-hi Search                                         ctermbg=lightslateblue     guibg=lightslateblue
+hi NonText          ctermfg=white   guifg=white   ctermfg=black              guibg=black 
+hi Folded                                         ctermbg=239                guibg=gray30
+hi FoldColumn       ctermfg=white   guifg=white   ctermbg=239                guibg=gray30
+hi IncSearch                                      ctermbg=67                 guibg=steelblue
+hi Search                                         ctermbg=105                guibg=lightslateblue
 
 " syntax
-hi Comment          ctermfg=grey64
-hi Todo             ctermfg=blue 
-hi Constant         ctermfg=yellow2    
-hi String           ctermfg=goldenrod2
-hi Operator         ctermfg=OrangeRed
-hi Statement        ctermfg=chocolate
-hi Function         ctermfg=cyan2
-hi Type             ctermfg=violet
-hi Exception        ctermfg=green
-hi Conditional      ctermfg=LightSkyBlue2
-hi PreProc          ctermfg=magenta
-hi Special          ctermfg=salmon
-hi 
+hi Comment          ctermfg=248                 guifg=Grey66
+hi Todo             ctermfg=blue                guifg=blue
+hi Constant         ctermfg=190                 guifg=Yellow2    
+hi String           ctermfg=186                 guifg=LightGoldenrod2
+hi Operator         ctermfg=202                 guifg=OrangeRed1
+hi Statement        ctermfg=88                  guifg=DarkRed
+hi Function         ctermfg=50                  guifg=cyan2
+hi Type             ctermfg=177                 guifg=violet
+hi Exception        ctermfg=green               guifg=green
+hi Conditional      ctermfg=109                 guifg=LightSkyBlue3
+hi PreProc          ctermfg=magenta             guifg=magenta
+hi Special          ctermfg=209                 guifg=salmon1
 
 " links
 hi link Character   String

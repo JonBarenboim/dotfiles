@@ -1,4 +1,5 @@
-"set guicursor=n-v-c:block-Cursor/lCursor,ve:ver35-Cursor,o:hor50-Cursor,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175
+" Set cursor stlye: block in visual mode, pipe in insert mode, half height
+" when entering a command, underline when replacing 
 set guicursor=n-v-c:block-Cursor,o:hor50-Cursor,r:hor15-Cursor,i-ci:ver25-Cursor,a:blinkon0
 " defauly agimrLtT
 " Remove scroll bars
@@ -7,4 +8,10 @@ set guioptions-=R
 set guioptions-=l
 set guioptions-=L
 set guioptions-=b
+
+" Disable bell. Must be disabled after gui is loaded
+set visualbell t_vb=                    " Turn off bell
+
+set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 10
+
 

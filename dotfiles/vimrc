@@ -1,15 +1,15 @@
 "TODOs
 " In Tagbar, automatically sort by position
-" In mycolors: add gui colors. Remove bolding, hi link NonText Normal, cursor styles, menys, highlight cursor line as underline
 " Colour schemes for tagbar, airline, NERDtree
 
 set nocompatible
 syntax on
 filetype plugin indent on
 let mapleader = ','
+colo mycolors
 
 """"" Vim Options
-set autoindent smartindent              " Automatically indent lines
+set autoindent cindent              " Automatically indent lines
 set autoread                            " Autoread file if changed outside vim
 set backspace=indent,eol,start          " Better backspace
 set expandtab tabstop=4 shiftwidth=4    " Expand tabs into 4 spaces
@@ -44,6 +44,9 @@ Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'vim-airline/vim-airline'
 let g:airline_powerline_fonts=1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
 
 Plugin 'moll/vim-bbye'
 nnoremap <leader>n :bn<CR>
@@ -64,7 +67,8 @@ let g:NERDTreeShowBookmarks=1
 let g:NERDTreeShowHidden=1
 " single click to expand directory, double click to open file
 let g:NERDTreeMouseMode=2
-" Open NERDTree if vim was openend without a file or when opening a directory
+let g:NERDTreeShowLineNumbers=1
+" Open NERDTree if vim was opened without a file or when opening a directory
 augroup NERDTree
     autocmd!
     autocmd VimEnter * if @% == "" | NERDTree | endif
@@ -121,19 +125,8 @@ nnoremap N Nzz
 
 "show full path of file
 nnoremap <C-G> 1<C-G> 
-""""" Color scheme
-
-augroup ColorScheme
-    autocmd!
-    " autocmd FileType * :syntax on | colo mycolors
-    " autocmd FileType vim :colo vim.mycolors
-    " autocmd FileType '' syntax off
-augroup END
 
 """"" Commands
-command! -nargs=+ ToUpper :%s/\(<args>\)/\U\1/g
-command! -nargs=+ ToLower :%s/\(<args>\)/\L\1/g
-
 " TabsOff -> Tabs converted to spaces
 " TabsOn -> Tabs stay as Tabs
 command! -nargs=0 TabsToggle :set invexpandtab
@@ -185,33 +178,44 @@ augroup END
 "commenting - see file for help
 source ~/.vim/scripts/comment.vim
 
-""""" air-line symbols 
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-    " unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
-let g:airline_symbols.whitespace = 'Ξ'
-
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_buffers = 1
-let g:airline_detect_modified = 1
-let g:airline#extensions#branch#format = 0
-let g:airline#extensions#whitespace#enabled = 0
-let g:airline#extensions#tabline#buffer_nr_show = 1
+" """"" air-line symbols 
+" if !exists('g:airline_symbols')
+"     let g:airline_symbols = {}
+" endif
+"     " unicode symbols
+" let g:airline_left_sep = '»'
+" let g:airline_left_sep = '▶'
+" let g:airline_right_sep = '«'
+" let g:airline_right_sep = '◀'
+" let g:airline_symbols.linenr = '␊'
+" let g:airline_symbols.linenr = '␤'
+" let g:airline_symbols.linenr = '¶'
+" let g:airline_symbols.branch = '⎇'
+" let g:airline_symbols.paste = 'ρ'
+" let g:airline_symbols.paste = 'Þ'
+" let g:airline_symbols.paste = '∥'
+" let g:airline_symbols.whitespace = 'Ξ'
+" 
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#show_buffers = 1
+" let g:airline_detect_modified = 1
+" let g:airline#extensions#branch#format = 0
+" let g:airline#extensions#whitespace#enabled = 0
+" let g:airline#extensions#tabline#buffer_nr_show = 1
 
 
 """"" see highlight group of the word under the cursor
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
+
+""""" Add R to ctags
+let g:tagbar_type_r = {
+    \ 'ctagstype' : 'r',
+    \ 'kinds' : [
+        \ 'f:Functions',
+        \ 'g:GlobalVariables',
+        \ 'v:FunctionVariables',
+    \ ]
+\ }
