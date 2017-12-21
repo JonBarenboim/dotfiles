@@ -46,4 +46,4 @@ rm(cols)
 .l <- devtools::load_all
 .d <- devtools::document
 .t <- devtools::test
- 
+.c <- devtools::check

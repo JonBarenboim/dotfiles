@@ -139,12 +139,15 @@ command! Q :q
 
 """"" autosave
 " Save file (if it is writable and exists in file system) after 5 seconds of inactivity
+" Can turn off manually with `:augroup! AutoSave <CR>`
 set nobackup
 set noswapfile
 set updatetime=5000
 function! SetAutoSave()
     if @% != "" && filewritable(@%) && ! &readonly && &modifiable
-        autocmd CursorHold,CursorHoldI <buffer> write
+        augroup AutoSave
+            autocmd CursorHold,CursorHoldI <buffer> write
+        augroup END
     endif
 endfunction
 augroup SetAutoSave

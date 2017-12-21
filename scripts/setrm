@@ -31,12 +31,12 @@ rm_glob() {
     for str in "$@" ; do
         if [[ "$str" =~ [\?\*] ]] ; then # string has wildcards
             echo "Are you sure you want to delete the following files/directories?"
-            echo "$str"
-            if ~/bin/scripts/confirm_yn; then
-                command rm -r -- "$str"
+            echo $str
+            if confirm_yn; then
+                command rm -r -- $str
             fi
         else
-            command rm -r -- "$str"
+            command rm -r -- $str
         fi
     done
 }
@@ -79,6 +79,7 @@ rm_glob_dir() {
     done
 }
 
+# method wasn't given; print current method and return 0
 [ -z "$1" ] && type rm | head -n 1 && return 0
 
 case $1 in 
