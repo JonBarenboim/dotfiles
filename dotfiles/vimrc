@@ -54,7 +54,7 @@ nnoremap <leader>b :bp<CR>
 nnoremap <leader>q :Bdelete<CR>
 
 Plugin 'tpope/vim-fugitive'
-Plugin 'tmgedberg/SimpylFold'
+Plugin 'tmhedberg/SimpylFold'
 Plugin 'matze/vim-ini-fold'
 Plugin 'timakro/vim-searchant'
 autocmd FileType * highlight SearchCurrent ctermbg=red
@@ -79,7 +79,7 @@ Plugin 'majutsushi/tagbar'
 nnoremap <F1> :TagbarOpenAutoClose<CR>
 nnoremap <F2> :TagbarToggle<CR>
 
-Plugin 'Yggdroot/intendline'
+Plugin 'Yggdroot/indentLine'
 " Show by default for python and vimscript files
 let g:indentLine_endabled = 1
 let g:indentLIne_filetype = ['python', 'vim']
