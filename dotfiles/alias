@@ -75,6 +75,32 @@ if type fls &>/dev/null ; then
 fi
 
 
+### REDSHIFT ALIASES ###
+if $(which redshift 2&> /dev/null) ; then
+    export RSBRIGHTNESS=1.0
+    export RSCOLOR=5600
+
+    alias rs0='export RSCOLOR=5600 RSBRIGHTNESS=1.0 ; redshift -x'
+    alias rs1='export RSCOLOR=4000 RSBRIGHTNESS=0.8 ; rsset'
+    alias rs2='export RSCOLOR=3600 RSBRIGHTNESS=0.6 ; rsset'
+    alias rs3='export RSCOLOR=3200 RSBRIGHTNESS=0.5 ; rsset'
+    alias rs4='export RSCOLOR=3000 RSBRIGHTNESS=0.4 ; rsset'
+    alias rs5='export RSCOLOR=2800 RSBRIGHTNESS=0.3 ; rsset'
+
+    alias rbup='export RSBRIGHTNESS=$(echo "$RSBRIGHTNESS + 0.1" | bc) ; rsset'
+    alias rbdn='export RSBRIGHTNESS=$(echo "$RSBRIGHTNESS - 0.1" | bc) ; rsset'
+    alias rbup2='export RSBRIGHTNESS=$(echo "$RSBRIGHTNESS + 0.05" | bc) ; rsset'
+    alias rbdn2='export RSBRIGHTNESS=$(echo "$RSBRIGHTNESS - 0.05" | bc) ; rsset'
+
+    alias rcup='export RSCOLOR=$((RSCOLOR + 100)) ; rsset'
+    alias rcdn='export RSCOLOR=$((RSCOLOR - 100)) ; rsset'
+    alias rcup5='export RSCOLOR=$((RSCOLOR + 500)) ; rsset'
+    alias rcdn5='export RSCOLOR=$((RSCOLOR - 500)) ; rsset'
+
+    alias rsset='redshift -O $RSCOLOR -b $RSBRIGHTNESS'
+fi
+
+
 ### TYPOS ###
 alias where="which"
 alias l="ls"
