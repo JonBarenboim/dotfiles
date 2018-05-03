@@ -34,7 +34,15 @@ prompt_command() {
 	job_color="${job_color}m\]"
 	[ "$job_color" == "\[\033[0m\]" ] && job_color=""
 
-    git_branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/')
+    # Git
+    if $(git branch &> /dev/null) ; then
+        git_repo=$(basename $(git rev-parse --show-toplevel))
+        git_branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+        git_string="(${git_repo} - ${git_branch})"
+    else
+        git_string=""
+    fi
+                                                                     
     remote_mount=$(df . 2> /dev/null | grep @ | sed -e 's/.*@\(.*\):.*/\(@\1\)/')
 
     PS1="[${name_color}\u${NONE}"
@@ -42,6 +50,6 @@ prompt_command() {
         PS1="${PS1}${at_color}@${NONE}\h"
     fi
     PS1="${PS1} ${job_color}\W${NONE}]"
-    PS1="${PS1}${BYELLOW}${remote_mount}${git_branch}${ret_color}\$${NONE} "
+    PS1="${PS1}${BYELLOW}${remote_mount}${git_string}${ret_color}\$${NONE} "
 }
 export PROMPT_COMMAND=prompt_command
