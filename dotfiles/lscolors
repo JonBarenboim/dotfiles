@@ -35,7 +35,7 @@ elif grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
     archive_extensions=('7z' 'gz' 'tgz' 'tar' 'bz2' 'zip' 'taz' 'dmg' 'rar')
     media_extensions=('jpg' 'jpeg' 'pdn' 'tiff' 'tif' 'svg' 'svgz' 'wav' 'flax' 'm4a' 'wma' 'mp3' 'mp4' 'wmv' 'midi' 'avi' 'mkv' 'mov' 'mpeg' 'png' 'gif' )
     document_extensions=('doc' 'docx' 'xls' 'xlsx' 'ppt' 'pptx' 'pub' 'ai' 'csv' 'tsv' 'md' 'html' 'pdf' 'txt')
-    code_extensions=('py' 'java' 'js' 'm' 'pl' 'r' 'c' 'cpp' 'cc' 'h' 'o' 'R' 'sh')
+    code_extensions=('py' 'java' 'js' 'm' 'pl' 'r' 'c' 'cpp' 'cc' 'h' 'o' 'R' 'sh', 'ts', 'cs', 'go')
 
     LS_COLORS="no=00:fi=00"
     #     directories in cyan
@@ -60,7 +60,7 @@ elif grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
     for a in "${document_extensions[@]}" ; do
         LS_COLORS="$LS_COLORS:*.$a=33"
     done
-    #     code files in purple 
+    #     source code files in purple 
     for a in "${code_extensions[@]}" ; do
         LS_COLORS="$LS_COLORS:*.$a=35"
     done

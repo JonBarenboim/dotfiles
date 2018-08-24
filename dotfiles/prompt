@@ -36,8 +36,8 @@ prompt_command() {
 
     # Git
     if $(git branch &> /dev/null) ; then
-        git_repo=$(basename $(git rev-parse --show-toplevel))
-        git_branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+        git_repo="$(basename "$(git rev-parse --show-toplevel)")"
+        git_branch="$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')"
         git_string="(${git_repo} - ${git_branch})"
     else
         git_string=""

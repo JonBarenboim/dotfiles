@@ -24,6 +24,7 @@ fi
 if [ ! -d ~/.vim ] && $confirm_yn "Set up vim?" ; then
 	ln -s $(pwd)/vim ~/.vim
 	git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim	
+    vim +PluginInstall +qall
 fi
 
 
